@@ -239,11 +239,11 @@ elif page == "Manual Risk Assessment":
 # PAGE 3: MODEL COMPARISON
 # ==========================================
 elif page == "Model Comparison":
-    st.title("📊 Model Performance")
+    st.title("Model Performance")
     
     metrics_df = get_model_metrics()
     
-    st.info("🏆 **Selected Model: Random Forest** (Recall: 87.9%)")
+    st.info("**Selected Model: Random Forest** (Recall: 87.9%)")
     
     # Chart
     df_melt = metrics_df.melt(id_vars="Model", var_name="Metric", value_name="Score")
