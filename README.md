@@ -134,5 +134,5 @@ After testing multiple algorithms (Logistic Regression, SVM, XGBoost), **Random 
 
 ---
 
-## Contact
-**Project by:** Arushi Dhawale, Methika M, Swarali Marwadi
+## Project by:
+Arushi Dhawale, Methika M, Swarali Marwadi
