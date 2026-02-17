@@ -104,7 +104,7 @@ page = st.sidebar.radio("Go to", ["Dashboard Overview", "Manual Risk Assessment"
 # PAGE 1: OVERVIEW
 # ==========================================
 if page == "Dashboard Overview":
-    st.title("🚨 Pre-Delinquency Intervention Engine")
+    st.title("Pre-Delinquency Intervention Engine")
     
     kpi1, kpi2, kpi3, kpi4 = st.columns(4)
     kpi1.metric("Users Monitored", len(df))
@@ -112,7 +112,7 @@ if page == "Dashboard Overview":
     kpi3.metric("Avg Risk Score", f"{df['Risk_Probability'].mean()*100:.1f}%")
     kpi4.metric("Avg Credit Load", f"${df['Credit amount'].mean():.0f}")
 
-    st.markdown("### 🔥 Top 10 High Risk Users")
+    st.markdown("### Top 10 High Risk Users")
     top_risk = df.sort_values(by='Risk_Probability', ascending=False).head(10)
     
     st.dataframe(
@@ -211,26 +211,26 @@ elif page == "Manual Risk Assessment":
         
         # Reasoning Logic (Updated to use <b> tags for bolding inside HTML)
         if user['UPI_Lending_Count'] > 10:
-            reasons.append(f"❌ <b>Critical Distress Signal:</b> User accessed quick-loan apps <b>{int(user['UPI_Lending_Count'])} times</b>. High frequency borrowing from alternative lenders is the strongest predictor of impending delinquency.")
+            reasons.append(f"<b>Critical Distress Signal:</b> User accessed quick-loan apps <b>{int(user['UPI_Lending_Count'])} times</b>. High frequency borrowing from alternative lenders is the strongest predictor of impending delinquency.")
         elif user['UPI_Lending_Count'] > 3:
-            reasons.append(f"⚠️ <b>Warning Signal:</b> Moderate usage of lending apps ({int(user['UPI_Lending_Count'])} times). Monitor for increasing frequency.")
+            reasons.append(f"<b>Warning Signal:</b> Moderate usage of lending apps ({int(user['UPI_Lending_Count'])} times). Monitor for increasing frequency.")
         
         avg_spend = df['Avg_Discretionary_Spend'].mean()
         if user['Avg_Discretionary_Spend'] < (avg_spend * 0.6):
-            reasons.append(f"❌ <b>Liquidity Crunch:</b> Average discretionary spending is <b>${user['Avg_Discretionary_Spend']:.0f}</b> (vs Avg: ${avg_spend:.0f}). A sharp drop in lifestyle spending often precedes default.")
+            reasons.append(f"<b>Liquidity Crunch:</b> Average discretionary spending is <b>${user['Avg_Discretionary_Spend']:.0f}</b> (vs Avg: ${avg_spend:.0f}). A sharp drop in lifestyle spending often precedes default.")
         
         if user['Credit amount'] > 5000:
-            reasons.append(f"⚠️ <b>High Debt Burden:</b> Total credit exposure is <b>${user['Credit amount']:.0f}</b>, which significantly increases the risk weight.")
+            reasons.append(f"<b>High Debt Burden:</b> Total credit exposure is <b>${user['Credit amount']:.0f}</b>, which significantly increases the risk weight.")
         
         if user['Avg_Salary_Day'] > 5:
-             reasons.append(f"⚠️<b>Income Irregularity:</b> Salary is credited late in the month (Day {user['Avg_Salary_Day']:.0f}), indicating potential employer instability or cash flow gaps.")
+             reasons.append(f"<b>Income Irregularity:</b> Salary is credited late in the month (Day {user['Avg_Salary_Day']:.0f}), indicating potential employer instability or cash flow gaps.")
 
         if reasons:
             for r in reasons:
                 # The HTML <b> tags will now render correctly inside this div
                 st.markdown(f"<div class='reason-box'>{r}</div>", unsafe_allow_html=True)
         else:
-            st.success("✅**Stable Profile:** No high-risk behavioral patterns detected. User maintains healthy spending and borrowing habits.")
+            st.success("**Stable Profile:** No high-risk behavioral patterns detected. User maintains healthy spending and borrowing habits.")
 
     else:
         st.error("User ID not found.")
