@@ -110,7 +110,7 @@ if page == "Dashboard Overview":
     kpi1.metric("Users Monitored", len(df))
     kpi2.metric("High Risk Alerts", len(df[df['Risk_Label'] == 'High']), delta_color="inverse")
     kpi3.metric("Avg Risk Score", f"{df['Risk_Probability'].mean()*100:.1f}%")
-    kpi4.metric("Avg Credit Load", f"${df['Credit amount'].mean():.0f}")
+    kpi4.metric("Avg Credit Load", f"{df['Credit amount'].mean():.0f}")
 
     st.markdown("### Top 10 High Risk Users")
     top_risk = df.sort_values(by='Risk_Probability', ascending=False).head(10)
@@ -186,15 +186,15 @@ elif page == "Manual Risk Assessment":
 
             # Metric 2: Spend (Normal: Low is Bad/Red, requires negative string)
             if user['Avg_Discretionary_Spend'] < 400:
-                m2.metric("Discretionary Spend", f"${user['Avg_Discretionary_Spend']:.0f}", delta="- Low Liquidity", delta_color="normal")
+                m2.metric("Discretionary Spend", f"{user['Avg_Discretionary_Spend']:.0f}", delta="- Low Liquidity", delta_color="normal")
             else:
-                m2.metric("Discretionary Spend", f"${user['Avg_Discretionary_Spend']:.0f}", delta="Stable", delta_color="normal")
+                m2.metric("Discretionary Spend", f"{user['Avg_Discretionary_Spend']:.0f}", delta="Stable", delta_color="normal")
 
             # Metric 3: Credit (Inverse: High is Bad/Red)
             if user['Credit amount'] > 5000:
-                m3.metric("Total Credit Amount", f"${user['Credit amount']:.0f}", delta="High Debt", delta_color="inverse")
+                m3.metric("Total Credit Amount", f"{user['Credit amount']:.0f}", delta="High Debt", delta_color="inverse")
             else:
-                m3.metric("Total Credit Amount", f"${user['Credit amount']:.0f}", delta="Normal", delta_color="normal")
+                m3.metric("Total Credit Amount", f"{user['Credit amount']:.0f}", delta="Normal", delta_color="normal")
 
             # Metric 4: Salary (Inverse: High Day is Bad/Red)
             if user['Avg_Salary_Day'] > 5:
@@ -217,10 +217,10 @@ elif page == "Manual Risk Assessment":
         
         avg_spend = df['Avg_Discretionary_Spend'].mean()
         if user['Avg_Discretionary_Spend'] < (avg_spend * 0.6):
-            reasons.append(f"<b>Liquidity Crunch:</b> Average discretionary spending is <b>${user['Avg_Discretionary_Spend']:.0f}</b> (vs Avg: ${avg_spend:.0f}). A sharp drop in lifestyle spending often precedes default.")
+            reasons.append(f"<b>Liquidity Crunch:</b> Average discretionary spending is <b>{user['Avg_Discretionary_Spend']:.0f}</b> (vs Avg: {avg_spend:.0f}). A sharp drop in lifestyle spending often precedes default.")
         
         if user['Credit amount'] > 5000:
-            reasons.append(f"<b>High Debt Burden:</b> Total credit exposure is <b>${user['Credit amount']:.0f}</b>, which significantly increases the risk weight.")
+            reasons.append(f"<b>High Debt Burden:</b> Total credit exposure is <b>{user['Credit amount']:.0f}</b>, which significantly increases the risk weight.")
         
         if user['Avg_Salary_Day'] > 5:
              reasons.append(f"<b>Income Irregularity:</b> Salary is credited late in the month (Day {user['Avg_Salary_Day']:.0f}), indicating potential employer instability or cash flow gaps.")
