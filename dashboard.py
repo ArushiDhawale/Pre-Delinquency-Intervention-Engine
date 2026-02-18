@@ -4,10 +4,8 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 
-# --- PAGE CONFIG ---
 st.set_page_config(page_title="Pre-Delinquency Intervention Engine", layout="wide")
 
-# --- CUSTOM CSS ---
 st.markdown("""
     <style>
     .metric-card {
@@ -33,7 +31,6 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 1. DATA LOADER & RISK ENGINE ---
 @st.cache_data
 def load_and_score_data():
     try:
@@ -43,7 +40,6 @@ def load_and_score_data():
         st.error("Files not found. Ensure 'german_credit_data.csv' and 'synthetic_transaction_data.csv' are in the folder.")
         st.stop()
 
-    # Feature Engineering
     upi_counts = df_trans[df_trans['Category'] == 'UPI_Lending_App'].groupby('User_ID').size()
     upi_counts.name = 'UPI_Lending_Count'
 
@@ -56,7 +52,6 @@ def load_and_score_data():
     salary_day = salary_trans.groupby('User_ID')['Day'].mean()
     salary_day.name = 'Avg_Salary_Day'
 
-    # Merge
     df_master = df_credit.join(upi_counts, how='left')
     df_master = df_master.join(disc_spend, how='left')
     df_master = df_master.join(salary_day, how='left')
@@ -67,14 +62,12 @@ def load_and_score_data():
     
     df_master['User_ID'] = df_master.index
 
-    # Risk Scoring Logic
     n_upi = df_master['UPI_Lending_Count'] / df_master['UPI_Lending_Count'].max()
     n_credit = df_master['Credit amount'] / df_master['Credit amount'].max()
     n_salary = df_master['Avg_Salary_Day'] / 30.0
     max_spend = df_master['Avg_Discretionary_Spend'].max()
     n_spend_inv = 1 - (df_master['Avg_Discretionary_Spend'] / max_spend)
 
-    # Weights: UPI (40%), Spend Drop (30%), Credit Load (20%), Late Salary (10%)
     df_master['Risk_Probability'] = (n_upi * 0.40) + (n_spend_inv * 0.30) + (n_credit * 0.20) + (n_salary * 0.10)
     df_master['Risk_Probability'] = df_master['Risk_Probability'] / df_master['Risk_Probability'].max()
 
@@ -83,7 +76,6 @@ def load_and_score_data():
 
     return df_master
 
-# --- MOCK METRICS ---
 def get_model_metrics():
     return pd.DataFrame({
         'Model': ['Random Forest', 'XGBoost', 'Logistic Regression', 'SVC'],
@@ -93,10 +85,8 @@ def get_model_metrics():
         'ROC-AUC': [0.935, 0.920, 0.926, 0.900]
     })
 
-# --- LOAD DATA ---
 df = load_and_score_data()
 
-# --- SIDEBAR ---
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Dashboard Overview", "Manual Risk Assessment", "Model Comparison"])
 
@@ -131,9 +121,8 @@ if page == "Dashboard Overview":
 # PAGE 2: MANUAL ASSESSMENT (UPDATED COLORS)
 # ==========================================
 elif page == "Manual Risk Assessment":
-    st.title("🔍 Individual Risk Assessment")
+    st.title("Individual Risk Assessment")
 
-    # Input Section
     c_input, _ = st.columns([1, 2])
     with c_input:
         min_id, max_id = int(df.index.min()), int(df.index.max())
@@ -146,7 +135,6 @@ elif page == "Manual Risk Assessment":
         
         st.markdown("---")
         
-        # --- TOP SECTION: GAUGE (LEFT) + METRICS GRID (RIGHT) ---
         col_gauge, col_metrics = st.columns([1, 2])
         
         # 1. Gauge Chart (Left)
@@ -172,44 +160,37 @@ elif page == "Manual Risk Assessment":
             fig.update_layout(height=150, margin=dict(l=10, r=10, t=10, b=10), paper_bgcolor="#0E1117")
             st.plotly_chart(fig, use_container_width=True)
 
-        # 2. Metrics Grid (Right) - 2x2 Layout with LOGIC COLORS
         with col_metrics:
             st.markdown("### Key Reasoning Engine")
             m1, m2 = st.columns(2)
             m3, m4 = st.columns(2)
-            
-            # Metric 1: UPI (Inverse: High is Bad/Red)
+
             if user['UPI_Lending_Count'] > 5:
                 m1.metric("UPI Lending Apps", int(user['UPI_Lending_Count']), delta="High Usage", delta_color="inverse")
             else:
                 m1.metric("UPI Lending Apps", int(user['UPI_Lending_Count']), delta="Normal", delta_color="normal")
 
-            # Metric 2: Spend (Normal: Low is Bad/Red, requires negative string)
             if user['Avg_Discretionary_Spend'] < 400:
                 m2.metric("Discretionary Spend", f"{user['Avg_Discretionary_Spend']:.0f}", delta="- Low Liquidity", delta_color="normal")
             else:
                 m2.metric("Discretionary Spend", f"{user['Avg_Discretionary_Spend']:.0f}", delta="Stable", delta_color="normal")
 
-            # Metric 3: Credit (Inverse: High is Bad/Red)
             if user['Credit amount'] > 5000:
                 m3.metric("Total Credit Amount", f"{user['Credit amount']:.0f}", delta="High Debt", delta_color="inverse")
             else:
                 m3.metric("Total Credit Amount", f"{user['Credit amount']:.0f}", delta="Normal", delta_color="normal")
 
-            # Metric 4: Salary (Inverse: High Day is Bad/Red)
             if user['Avg_Salary_Day'] > 5:
                 m4.metric("Salary Credit Day", f"Day {user['Avg_Salary_Day']:.0f}", delta="Late", delta_color="inverse")
             else:
                 m4.metric("Salary Credit Day", f"Day {user['Avg_Salary_Day']:.0f}", delta="On Time", delta_color="normal")
         
         reasons = []
-# --- BOTTOM SECTION: REASONING (FULL WIDTH) ---
         st.markdown("---")
         st.markdown("### AI Reasoning Engine")
         
         reasons = []
-        
-        # Reasoning Logic (Updated to use <b> tags for bolding inside HTML)
+
         if user['UPI_Lending_Count'] > 10:
             reasons.append(f"<b>Critical Distress Signal:</b> User accessed quick-loan apps <b>{int(user['UPI_Lending_Count'])} times</b>. High frequency borrowing from alternative lenders is the strongest predictor of impending delinquency.")
         elif user['UPI_Lending_Count'] > 3:
@@ -227,7 +208,6 @@ elif page == "Manual Risk Assessment":
 
         if reasons:
             for r in reasons:
-                # The HTML <b> tags will now render correctly inside this div
                 st.markdown(f"<div class='reason-box'>{r}</div>", unsafe_allow_html=True)
         else:
             st.success("**Stable Profile:** No high-risk behavioral patterns detected. User maintains healthy spending and borrowing habits.")
@@ -245,14 +225,12 @@ elif page == "Model Comparison":
     
     st.info("**Selected Model: Random Forest** (Recall: 87.9%)")
     
-    # Chart
     df_melt = metrics_df.melt(id_vars="Model", var_name="Metric", value_name="Score")
     fig = px.bar(df_melt, x="Metric", y="Score", color="Model", barmode="group",
                  text_auto='.2f', color_discrete_sequence=px.colors.qualitative.Bold)
     fig.update_layout(yaxis_range=[0.8, 1.0])
     st.plotly_chart(fig, use_container_width=True)
     
-    # Feature Importance
     st.subheader("Global Feature Importance")
     feat_df = pd.DataFrame({
         'Feature': ['UPI Lending Count', 'Avg Discretionary Spend', 'Credit Amount', 'Avg Salary Day', 'Duration'],
