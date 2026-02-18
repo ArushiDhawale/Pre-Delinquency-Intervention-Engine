@@ -43,6 +43,7 @@ Pre-Delinquency-Engine/
 ├── Pre Delinquency.ipynb          # Jupyter Notebook for EDA, Training & Model Selection
 ├── german_credit_data.csv         # Dataset 1: Demographic & Credit History
 ├── synthetic_transaction_data.csv # Dataset 2: Daily Transaction Logs (UPI, Salary, Spend)
+├── Requirements.txt               # Project Requirements
 └── README.md                      # Project Documentation
 
 ```
