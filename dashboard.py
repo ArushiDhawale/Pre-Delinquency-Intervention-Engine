@@ -78,11 +78,11 @@ def load_and_score_data():
 
 def get_model_metrics():
     return pd.DataFrame({
-        'Model': ['Random Forest', 'XGBoost', 'Logistic Regression', 'SVC'],
-        'Accuracy': [0.950, 0.940, 0.940, 0.920],
-        'Precision': [0.967, 0.950, 0.950, 0.900],
-        'Recall': [0.879, 0.850, 0.864, 0.820],
-        'ROC-AUC': [0.935, 0.920, 0.926, 0.900]
+        'Model': ['Random Forest', 'SVM', 'Decision Tree', 'Logistic Regression'],
+        'Accuracy': [0.950, 0.950, 0.945, 0.940],
+        'Precision': [0.967, 0.967, 0.951, 0.950],
+        'Recall': [0.879, 0.879, 0.879, 0.864],
+        'ROC-AUC': [0.935, 0.929, 0.931, 0.926]
     })
 
 df = load_and_score_data()
