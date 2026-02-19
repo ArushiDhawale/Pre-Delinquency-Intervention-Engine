@@ -222,30 +222,26 @@ elif page == "Manual Risk Assessment":
 # PAGE 3: MODEL COMPARISON
 # ==========================================
 elif page == "Model Comparison":
-    st.title("📊 Model Performance")
+    st.title("Model Performance")
     
     metrics_df = get_model_metrics()
-    st.info("🏆 **Selected Model: Random Forest** (Recall: 87.9%)")
+    st.info("**Selected Model: Random Forest** (Recall: 87.9%)")
     
-    # Chart
     df_melt = metrics_df.melt(id_vars="Model", var_name="Metric", value_name="Score")
     fig = px.bar(df_melt, x="Metric", y="Score", color="Model", barmode="group",
                  text_auto='.2f', color_discrete_sequence=px.colors.qualitative.Bold)
     fig.update_layout(yaxis_range=[0.8, 1.0])
     st.plotly_chart(fig, use_container_width=True)
     
-    # --- EXTRACT GRAPH DIRECTLY FROM NOTEBOOK ---
-    st.subheader("Global Feature Importance (Extracted from Notebook)")
+    st.subheader("Global Feature Importance")
     
     try:
         with open("Pre Delinquency.ipynb", "r", encoding="utf-8") as f:
             nb = json.load(f)
             
         img_base64 = None
-        # Search through notebook cells to find the Feature Importance plot
         for cell in nb['cells']:
             source = "".join(cell.get('source', []))
-            # Look for the specific cell that generates the feature importance graph
             if "feature_importances_" in source or "INTERPRETABILITY" in source:
                 for output in cell.get('outputs', []):
                     if 'data' in output and 'image/png' in output['data']:
@@ -253,9 +249,7 @@ elif page == "Model Comparison":
                         break
         
         if img_base64:
-            # Decode and display the image
             img_bytes = base64.b64decode(img_base64)
-            st.image(img_bytes, caption="Accurate Feature Importance from Training", use_container_width=True)
         else:
             st.warning("Could not locate the image in the notebook.")
             
