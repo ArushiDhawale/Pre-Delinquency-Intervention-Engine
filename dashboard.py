@@ -250,6 +250,7 @@ elif page == "Model Comparison":
         
         if img_base64:
             img_bytes = base64.b64decode(img_base64)
+            st.image(img_bytes, caption="Feature Importance", use_container_width=True)
         else:
             st.warning("Could not locate the image in the notebook.")
             
