@@ -115,7 +115,7 @@ if page == "Dashboard Overview":
         column_config={
             "User_ID": st.column_config.NumberColumn("User ID", format="%d"),
             "Risk_Probability": st.column_config.ProgressColumn("Delinquency Prob.", format="%.1f%%", min_value=0, max_value=1),
-            "Credit amount": st.column_config.NumberColumn("Credit Amount", format="$%d"),
+            "Credit amount": st.column_config.NumberColumn("Credit Amount", format="%d"),
             "UPI_Lending_Count": st.column_config.NumberColumn("UPI Apps", format="%d"),
         }
     )
